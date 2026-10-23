@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>第 3 章 色彩专题 | vis</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="第 3 章 色彩专题" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="visualization lesson" />
+<meta property="og:description" content="visualization lesson" />
+<link rel="canonical" href="https://cinger007.github.io/vis/lesson-03/lecture.html" />
+<meta property="og:url" content="https://cinger007.github.io/vis/lesson-03/lecture.html" />
+<meta property="og:site_name" content="vis" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="第 3 章 色彩专题" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"visualization lesson","headline":"第 3 章 色彩专题","url":"https://cinger007.github.io/vis/lesson-03/lecture.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/vis/assets/css/style.css?v=35a66ecb5e35e8c4f2c54a007cb6c590255b6f06">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/vis/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://cinger007.github.io/vis/">vis</a></h1>
+      
+
+      <h1 id="第-3-章-色彩专题">第 3 章 色彩专题</h1>
+
+<blockquote>
+  <p><strong>本讲义配套集成教学页面</strong>：<a href="/vis/lesson-03/index.html"><code class="language-plaintext highlighter-rouge">./index.html</code></a>（讲解 ⇄ 代码 ⇄ 演示 三 tab 自由切换）</p>
+
+  <p>推荐教学用法：浏览器打开 lesson 页面 → 左侧选章节 → 三个 tab 来回切（讲解看原理、代码看 ⭐ 关键点、演示看实际效果）。</p>
+</blockquote>
+
+<hr />
+
+<h2 id="31-颜色模型基础">3.1 颜色模型基础</h2>
+
+<blockquote>
+  <p>为什么需要 4 种颜色空间？它们各自擅长什么？色盲眼中看到的世界是怎样的？</p>
+</blockquote>
+
+<h3 id="为什么要学颜色模型">为什么要学颜色模型？</h3>
+<p>设计 colormap 时，不能直接用 RGB 插值——因为 RGB 不是感知均匀的（255,0,0 与 0,255,0 “看上去”亮度差很多）。你需要感知均匀的颜色空间（Lab / HCL）来插值，才能得到平滑的渐变。</p>
+
+<h3 id="4-大颜色空间">4 大颜色空间</h3>
+
+<ul>
+  <li>RGB：加色模型，设备相关。屏幕显示的默认。</li>
+  <li>HSL：艺术家友好（色相/饱和度/亮度独立），但仍不感知均匀。</li>
+  <li>CIE Lab：感知均匀，设计 colormap 的黄金标准。</li>
+  <li>CMYK：减色（印刷），web 可视化用不到。</li>
+</ul>
+
+<h3 id="cvd色觉缺陷">CVD（色觉缺陷）</h3>
+<p>约 8% 男性、0.5% 女性是色盲。常见三种：</p>
+
+<ul>
+  <li>红色盲（protanopia）：约 1% 男性</li>
+  <li>绿色盲（deuteranopia）：约 6% 男性（最常见）</li>
+  <li>蓝色盲（tritanopia）：极罕见</li>
+</ul>
+
+<hr />
+
+<h2 id="32-colormap-三类选择">3.2 colormap 三类选择</h2>
+
+<blockquote>
+  <p>顺序型 / 发散型 / 定性型。选错类型 = 误导读者。</p>
+</blockquote>
+
+<h3 id="三类-colormap-对应不同数据语义">三类 colormap 对应不同数据语义</h3>
+
+<ul>
+  <li>顺序型（Sequential）：数据有自然顺序（人口、温度）。单调亮度 + 单调色相。例子：Viridis / Plasma / Cividis</li>
+  <li>发散型（Diverging）：数据有意义的”中点”（如 0、正负偏差、白人中位数）。两端异色，中间白/浅。例子：RdBu / BrBG / PiYG</li>
+  <li>定性型（Qualitative）：数据无序（如产品类别）。色相区分、亮度接近。例子：Tableau10 / Set1 / Set3</li>
+</ul>
+
+<h3 id="典型错误">典型错误</h3>
+<p>用发散型 RdBu 画”50 州谋杀率”（有序数据）——中段接近白色，看上去”谋杀率 = 100 附近”的州是”中点”——但 100 没有任何语义，纯属误导。</p>
+
+<h3 id="cvd-友好检查清单">CVD 友好检查清单</h3>
+
+<ul>
+  <li>Viridis / Cividis：✅ 优（Nature Methods 推荐）</li>
+  <li>RdBu / BrBG：△ 中等（红绿对色盲不友好）</li>
+  <li>Tableau10（定性）：△ 与色相相关</li>
+  <li>Jet（彩虹谱）：⚠ 禁用</li>
+</ul>
+
+<hr />
+
+<h2 id="33-cie-lab-色域图">3.3 CIE Lab 色域图</h2>
+
+<blockquote>
+  <p>在感知均匀的颜色空间里，色域长什么样？</p>
+</blockquote>
+
+<h3 id="为什么需要-lab-色域图">为什么需要 Lab 色域图？</h3>
+<p>RGB 空间是立方体，但你不知道”哪些颜色真的存在、哪些会失真”。CIE Lab 是感知均匀空间，距离 ≈ 人眼感知差，是设计 colormap 和检查色域的标准。</p>
+
+<h3 id="三个色域嵌套关系">三个色域（嵌套关系）</h3>
+
+<ul>
+  <li>sRGB：屏幕通用标准（Web/PPT/一般科研图）</li>
+  <li>Adobe RGB：摄影/印刷，绿域更广</li>
+  <li>Rec.2020：4K 电视/HDR，色域最大
+超出 sRGB 的颜色（如高饱和度的纯绿）在普通屏幕上显示不出来，会被 clamp。</li>
+</ul>
+
+<h3 id="实战用法">实战用法</h3>
+
+<ul>
+  <li>从 d3.lab(L, a, b).rgb() 转换时，超出 sRGB 的颜色会自动 clamp</li>
+  <li>设计 colormap 时用 d3.interpolateLab（在 Lab 空间插值），比 d3.interpolateRgb 平滑得多</li>
+  <li>高饱和度色仅在打印/4K 屏幕上”存在”，Web 上看不一定准确</li>
+</ul>
+
+<hr />
+
+<h2 id="34-色系搭配规则5-大类">3.4 色系搭配规则（5 大类）</h2>
+
+<blockquote>
+  <p>单色 / 类比 / 互补 / 三等分 / 分裂互补——什么时候用哪个？</p>
+</blockquote>
+
+<h3 id="5-大色系规则">5 大色系规则</h3>
+
+<ul>
+  <li>单色 Monochromatic：同一色相不同亮度/饱和。安全、低风险。</li>
+  <li>类比 Analogous：色轮相邻 ±30°。和谐但缺少对比度。</li>
+  <li>互补 Complementary：色轮正对面 180°。对比度强但易刺眼。</li>
+  <li>三等分 Triadic：色轮 120° 等分。3 种类别时最常用。</li>
+  <li>分裂互补 Split：互补色相邻 150°。温和版互补。</li>
+</ul>
+
+<h3 id="选择原则">选择原则</h3>
+
+<ul>
+  <li>严肃科研：单色（Nature 黑白经济型配色）</li>
+  <li>层级 / 分组：类比</li>
+  <li>突出重点：互补（实验组 vs 对照组）</li>
+  <li>3 种类别：三等分</li>
+  <li>一般情况：分裂互补（不刺眼又有对比）</li>
+</ul>
+
+<hr />
+
+<h2 id="35-科研经典配色">3.5 科研经典配色</h2>
+
+<blockquote>
+  <p>Wong / Paul Tol / Okabe-Ito / Tableau / Paired / Viridis——顶标都在用什么？</p>
+</blockquote>
+
+<h3 id="3-大黄金标准">3 大黄金标准</h3>
+
+<ul>
+  <li>Wong 2011：Nature Methods 8:441 推荐，8 色 CVD 友好，灰度打印友好</li>
+  <li>Paul Tol：SRON Tech Note，bright（白底）/ muted（深底）/ high-contrast（对比</li>
+  <li>Okabe-Ito 2002：8 色，CVD 友好，早期 Nature/Science 默认</li>
+</ul>
+
+<h3 id="商业--通用">商业 / 通用</h3>
+
+<ul>
+  <li>Tableau 10：商业图表之王，10 色，红绿对色盲不友好</li>
+  <li>Paired (12)：配对设计（处理前/后），12 色过载</li>
+</ul>
+
+<h3 id="顺序型--发散型">顺序型 / 发散型</h3>
+
+<ul>
+  <li>Viridis：matplotlib/d3 默认，感知均匀 + CVD 友好</li>
+  <li>Cividid：Viridis 的 CVD 强化版（更蓝/黄分明）</li>
+  <li>RdBu：发散型红蓝</li>
+</ul>
+
+<h3 id="实战原则">实战原则</h3>
+
+<ul>
+  <li>类别数 ≤ 7，类别多时改用连续 colormap</li>
+  <li>必须经过 CVD 模拟测试</li>
+  <li>优先使用 CVD 友好 + 灰度友好的（顶标都用这套）</li>
+</ul>
+
+<hr />
+
+<h2 id="36-对错案例对比">3.6 对错案例对比</h2>
+
+<blockquote>
+  <p>4 张图，3 错 1 对。点击你认为”对”的那张。</p>
+</blockquote>
+
+<h3 id="4-个典型错误">4 个典型错误</h3>
+
+<ul>
+  <li>⚠ 彩虹谱 Jet：非感知均匀 + CVD 不友好 + 打印不友好。Nature 已禁用。</li>
+  <li>⚠ 红绿对比：红绿色盲眼中几乎变成同色（最严重的可访问性问题）</li>
+  <li>⚠ 颜色过多 12 色：超过 7 种时眼睛无法区分</li>
+  <li>✅ Wong 8 色：CVD 友好 + 灰度打印友好 + 类别数 ≤ 8</li>
+</ul>
+
+<h3 id="教学要点">教学要点</h3>
+<p>让学生亲手投票，能加深对”为什么是错的”的理解——光看理论不如下场选错一次来得深。</p>
+
+<hr />
+
+<h2 id="37-鲜艳--低饱和-哲学生成器">3.7 鲜艳 + 低饱和 哲学生成器</h2>
+
+<blockquote>
+  <p>颜色数量 ≤ 7、鲜艳颜色 + 低饱和度 = 好看又耐看。算法自动生成 5-7 色搭配。</p>
+</blockquote>
+
+<h3 id="你的配色哲学落地到-3-条规则">你的配色哲学（落地到 3 条规则）</h3>
+
+<ol>
+  <li>颜色数量 ≤ 7：超过 7 种眼睛就分不清</li>
+  <li>鲜艳颜色（高 H 区分度）：用 H 拉开类间距离（≥30°）</li>
+  <li>低饱和度（S 30-50%）：每个色都别太”冲”，耐看</li>
+</ol>
+
+<h3 id="经验公式">经验公式</h3>
+
+<ul>
+  <li>主色 S = 70-80%（鲜明但不刺眼）</li>
+  <li>配套色 S = 30-50%（低饱和，耐看）</li>
+  <li>强调色用互补或类比，不要全饱和</li>
+  <li>高亮用 L=85-90%（如背景、注释）</li>
+</ul>
+
+<h3 id="7-色生成规则">7 色生成规则</h3>
+<p>主色 + 2 类比（±30°）+ 1 类比低饱和 + 1 互补 + 1 互补低饱和 + 1 高亮 = 7 色，符合”≤ 7”原则。</p>
+
+<hr />
+
+<h2 id="38-cvd-论文图测">3.8 CVD 论文图测</h2>
+
+<blockquote>
+  <p>你的图在色盲眼里还看得懂吗？拿真实顶标图做测试。</p>
+</blockquote>
+
+<h3 id="3-个经典论文图案例">3 个”经典论文图”案例</h3>
+
+<ul>
+  <li>图 1：5 类别散点（Wong 配色）——Nature 风格</li>
+  <li>图 2：顺序型热图（Viridis）——最常见的科研图</li>
+  <li>图 3：红绿对比（错误案例）——常见但严重</li>
+</ul>
+
+<h3 id="cvd-测试流程">CVD 测试流程</h3>
+
+<ol>
+  <li>把图导出 PNG</li>
+  <li>用 Coblis 或 Color Oracle 模拟</li>
+  <li>看是否仍能区分（亮度对比 / 形状 / 标签）</li>
+</ol>
+
+<h3 id="实测结论">实测结论</h3>
+
+<ul>
+  <li>Wong / Okabe-Ito / Paul Tol：✅ 在 3 种 CVD 下都能区分</li>
+  <li>红绿对比：⚠ 在绿盲眼中几乎同色（最严重）</li>
+  <li>Nature/Science/Cell 已逐步迁移到 CVD 友好配色</li>
+</ul>
+
+<hr />
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

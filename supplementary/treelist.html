@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234f46e5'/%3E%3Crect x='22' y='52' width='14' height='26' rx='3' fill='%23a5b4fc'/%3E%3Crect x='43' y='36' width='14' height='42' rx='3' fill='%23e0e7ff'/%3E%3Crect x='64' y='22' width='14' height='56' rx='3' fill='%23ffffff'/%3E%3C/svg%3E" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>青岛软件学院25级新生</title>
+    <script src="../assets/d3.v7.min.js"></script>
+    <script src="utils/data.js"></script>
+    <script src="utils/treelist.js"></script>
+    <link rel="stylesheet" href="style/treelist.css">
+</head>
+
+<body>
+    <div class="chart-container">
+        <div class="title">青岛软件学院25级新生</div>
+        <div class="controls">
+            <button class="btn" onclick="expandAll(true)">展开全部</button>
+            <button class="btn" onclick="expandAll(false)">折叠全部</button>
+        </div>
+        <div id="tree-container"></div>
+    </div>
+
+    <script>
+        // 启动渲染
+        main();
+        // 测试树渲染
+        async function main() {
+            try {
+                const students = await load();
+                renderTree(mapToTreeStructure(students),nodeDisplay);
+            } catch (error) {
+                console.error("渲染失败:", error);
+                d3.select("#tree-container").html(`<div style="color:red">加载失败: ${error.message}</div>`);
+            }
+        }
+    </script>
+</body>
+
+</html>

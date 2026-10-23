@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2318181b'/%3E%3Crect x='22' y='52' width='14' height='26' rx='3' fill='%23a1a1aa'/%3E%3Crect x='43' y='36' width='14' height='42' rx='3' fill='%23d4d4d8'/%3E%3Crect x='64' y='22' width='14' height='56' rx='3' fill='%23ffffff'/%3E%3C/svg%3E" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>概念可视化 · 《可视化导论》</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../i18n.css" />
+  <script type="module" src="../../i18n.js"></script>
+</head>
+<body>
+
+  <div class="frame">
+
+    <!-- 顶部工具条（i18n 语言切换会自动注入到最右） -->
+    <header class="course-topbar portal-topbar">
+      <a class="pt-brand" href="../../">
+        <span class="pt-logo" aria-hidden="true">
+          <svg viewBox="0 0 100 100" width="18" height="18"><rect x="22" y="52" width="14" height="26" rx="3" fill="currentColor" opacity=".45"/><rect x="43" y="36" width="14" height="42" rx="3" fill="currentColor" opacity=".75"/><rect x="64" y="22" width="14" height="56" rx="3" fill="currentColor"/></svg>
+        </span>
+        <b data-i18n="portal.hero.h1">《可视化导论》</b>
+      </a>
+      <nav class="pt-links">
+        <a href="../../#chapters" data-i18n="portal.top.chapters">章节</a>
+        <a href="../../#tools" data-i18n="portal.top.study">学习工具</a>
+        <a href="../graph/" data-i18n="portal.top.graph">知识图谱</a>
+        <a href="../concepts/" class="pt-cur" data-i18n="portal.top.concepts">概念可视化</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- 概念可视化画廊 -->
+      <section class="sect tool-sect">
+        <div class="sect-head">
+          <h2 data-i18n="portal.concepts.title">概念可视化</h2>
+          <p data-i18n="portal.concepts.lead">课程中的抽象理论图形化呈现，每张图对应教材的具体章节。点击卡片加载图形，悬停可查看要点说明。</p>
+        </div>
+
+        <div class="gallery">
+          <div class="viz-card">
+            <h4>🔺 DIKW 金字塔</h4>
+            <p class="viz-src">对应 1.2 数据定义</p>
+            <div class="viz-stage" id="viz-dikw"></div>
+          </div>
+          <div class="viz-card">
+            <h4>📏 Stevens 测量尺度</h4>
+            <p class="viz-src">对应 1.3 数据属性 · Stevens 1946</p>
+            <div class="viz-stage" id="viz-stevens"></div>
+          </div>
+          <div class="viz-card">
+            <h4>🎚 Mackinlay 视觉通道排序</h4>
+            <p class="viz-src">对应 1.3 数据属性 · Mackinlay 1986</p>
+            <div class="viz-stage" id="viz-mack"></div>
+          </div>
+          <div class="viz-card">
+            <h4>🔁 Card 数据流模型</h4>
+            <p class="viz-src">对应 2.1 数据可视化流程 · Card 1999</p>
+            <div class="viz-stage" id="viz-card"></div>
+          </div>
+          <div class="viz-card">
+            <h4>📊 图表类型选择指南</h4>
+            <p class="viz-src">对应 4.1–5.x 图表选型</p>
+            <div class="viz-stage" id="viz-chartpick"></div>
+          </div>
+          <div class="viz-card">
+            <h4>🎨 配色方案选择</h4>
+            <p class="viz-src">对应 3.3 色彩方案设计</p>
+            <div class="viz-stage" id="viz-palette"></div>
+          </div>
+          <div class="viz-card viz-wide">
+            <h4>👁 色觉障碍（CVD）模拟</h4>
+            <p class="viz-src">对应 3.8 CVD 论文图测</p>
+            <div class="viz-stage" id="viz-cvd"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="pfoot">
+      <p data-i18n-html="footer.copyright">© 2026 《可视化导论》课程 · 中国石油大学（华东）· 授课教师：<a href="https://cinger007.github.io" target="_blank" rel="noopener">李昕</a> · 主要参考教材：陈为《可视化导论》</p>
+      <p class="pfoot-meta">Mackinlay 1986 · Stevens 1946 · Cleveland 1984 · Card 1999 ｜ 零依赖 · 离线可用 · D3.js v7</p>
+    </footer>
+  </div>
+
+  <script type="module" src="../../course.js"></script>
+</body>
+</html>

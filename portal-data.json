@@ -1,0 +1,618 @@
+{
+  "meta": {
+    "course": "《可视化导论》",
+    "teacher": "李昕",
+    "institution": "中国石油大学（华东）",
+    "textbook": "陈为《可视化导论》",
+    "totalHours": 32,
+    "totalSections": 27,
+    "updated": "2026-10-16"
+  },
+  "chapters": [
+    {
+      "id": "ch1",
+      "num": 1,
+      "title": "数据",
+      "titleEn": "Data",
+      "href": "lesson-01/",
+      "icon": "🧬",
+      "accent": "#6C8FF5",
+      "blurb": "一切可视化的起点。从生成到定义、属性、变换与 D3 选择器。",
+      "hours": 6,
+      "sections": [
+        {
+          "id": "1-1",
+          "title": "数据生成",
+          "tags": [
+            "AI 合成",
+            "CSV"
+          ]
+        },
+        {
+          "id": "1-2",
+          "title": "数据定义",
+          "tags": [
+            "DIKW",
+            "金字塔"
+          ]
+        },
+        {
+          "id": "1-3",
+          "title": "数据属性",
+          "tags": [
+            "Stevens",
+            "Mackinlay"
+          ]
+        },
+        {
+          "id": "1-4",
+          "title": "数据变换",
+          "tags": [
+            "函数式",
+            "map/reduce"
+          ]
+        },
+        {
+          "id": "1-5",
+          "title": "D3 数据选择器",
+          "tags": [
+            "Selection",
+            "enter/update/exit"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch2",
+      "num": 2,
+      "title": "数据可视化流程",
+      "titleEn": "Visualization Pipeline",
+      "href": "lesson-02/",
+      "icon": "🔁",
+      "accent": "#4FC0A1",
+      "blurb": "Card 数据流模型 + 从新生数据到分类树到树形列表的完整链路。",
+      "hours": 6,
+      "sections": [
+        {
+          "id": "2-1",
+          "title": "数据可视化流程",
+          "tags": [
+            "Card 模型",
+            "D→T→V→I"
+          ]
+        },
+        {
+          "id": "2-2",
+          "title": "数据变换：原数据 → 数据表",
+          "tags": [
+            "d3.rollup",
+            "聚合"
+          ]
+        },
+        {
+          "id": "2-3",
+          "title": "视觉映射：数据表 → 视觉结构",
+          "tags": [
+            "树布局",
+            "通道"
+          ]
+        },
+        {
+          "id": "2-4",
+          "title": "视图渲染与用户交互",
+          "tags": [
+            "事件委托",
+            "动画"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch3",
+      "num": 3,
+      "title": "色彩专题",
+      "titleEn": "Color Special Topic",
+      "href": "lesson-03/",
+      "icon": "🎨",
+      "accent": "#EE7C93",
+      "blurb": "颜色模型 + colormap + Lab 色域 + 5 大色系 + 经典科研配色 + 鲜艳/低饱和哲学生成器 + CVD 论文图测。",
+      "hours": 8,
+      "sections": [
+        {
+          "id": "3-1",
+          "title": "颜色模型基础",
+          "tags": [
+            "RGB",
+            "HSV",
+            "Lab",
+            "CVD"
+          ]
+        },
+        {
+          "id": "3-2",
+          "title": "colormap 三类选择",
+          "tags": [
+            "顺序型",
+            "发散型",
+            "定性型"
+          ]
+        },
+        {
+          "id": "3-3",
+          "title": "CIE Lab 色域图",
+          "tags": [
+            "感知均匀"
+          ]
+        },
+        {
+          "id": "3-4",
+          "title": "色系搭配规则（5 大类）",
+          "tags": [
+            "单色",
+            "类比",
+            "互补",
+            "三等分"
+          ]
+        },
+        {
+          "id": "3-5",
+          "title": "科研经典配色",
+          "tags": [
+            "Wong",
+            "Paul Tol",
+            "Okabe-Ito"
+          ]
+        },
+        {
+          "id": "3-6",
+          "title": "对错案例对比",
+          "tags": [
+            "错例",
+            "修正"
+          ]
+        },
+        {
+          "id": "3-7",
+          "title": "鲜艳 + 低饱和 哲学生成器",
+          "tags": [
+            "生成器"
+          ]
+        },
+        {
+          "id": "3-8",
+          "title": "CVD 论文图测",
+          "tags": [
+            "色盲",
+            "复检"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch4",
+      "num": 4,
+      "title": "低维数据可视化",
+      "titleEn": "Low-Dimensional Data",
+      "href": "lesson-04/",
+      "icon": "📈",
+      "accent": "#E8B04B",
+      "blurb": "Crime 数据坐标变换、10 种曲线拟合、Cleveland 45° 倾角、Marching Squares 等值线。",
+      "hours": 6,
+      "sections": [
+        {
+          "id": "4-1",
+          "title": "数据转换",
+          "tags": [
+            "三层坐标变换"
+          ]
+        },
+        {
+          "id": "4-2",
+          "title": "坐标轴变换",
+          "tags": [
+            "scale",
+            "axis"
+          ]
+        },
+        {
+          "id": "4-3",
+          "title": "曲线拟合",
+          "tags": [
+            "10 种曲线"
+          ]
+        },
+        {
+          "id": "4-4",
+          "title": "倾角感知（45° 黄金角）",
+          "tags": [
+            "Cleveland"
+          ]
+        },
+        {
+          "id": "4-5",
+          "title": "等值线（Marching Squares）",
+          "tags": [
+            "等值线"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch5",
+      "num": 5,
+      "title": "时序数据可视化",
+      "titleEn": "Temporal Data",
+      "href": "lesson-05/",
+      "icon": "⏳",
+      "accent": "#9B7FE0",
+      "blurb": "5 个时间属性、法国人名时间序列、van Wijk 日历热图、阿基米德螺旋日历、Storyline 故事线（《侏罗纪公园》案例）。",
+      "hours": 6,
+      "sections": [
+        {
+          "id": "5-1",
+          "title": "时间属性",
+          "tags": [
+            "时间分解"
+          ]
+        },
+        {
+          "id": "5-2",
+          "title": "标准时间可视化（折线图）",
+          "tags": [
+            "折线",
+            "标注"
+          ]
+        },
+        {
+          "id": "5-3",
+          "title": "日历热图（van Wijk）",
+          "tags": [
+            "日历",
+            "colormap"
+          ]
+        },
+        {
+          "id": "5-4",
+          "title": "周期时间可视化（阿基米德螺旋）",
+          "tags": [
+            "极坐标"
+          ]
+        },
+        {
+          "id": "5-5",
+          "title": "Storyline 时间线（侏罗纪公园）",
+          "tags": [
+            "Storygraph"
+          ]
+        }
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "ch": 1,
+      "items": [
+        {
+          "sec": "1-3",
+          "q": {
+            "zh": "「满意度：很不满意 → 一般 → 很满意」属于哪种测量尺度？",
+            "en": "What scale is 'satisfaction: bad → neutral → good'?"
+          },
+          "options": [
+            {
+              "zh": "定类 Nominal",
+              "en": "Nominal"
+            },
+            {
+              "zh": "定序 Ordinal",
+              "en": "Ordinal"
+            },
+            {
+              "zh": "定距 Interval",
+              "en": "Interval"
+            },
+            {
+              "zh": "定比 Ratio",
+              "en": "Ratio"
+            }
+          ],
+          "a": 1,
+          "exp": {
+            "zh": "有顺序但相邻等级间距不一定相等，属于定序；不能求算术平均。",
+            "en": "Ordered but with unequal spacing: ordinal. Arithmetic means are invalid."
+          }
+        },
+        {
+          "sec": "1-3",
+          "q": {
+            "zh": "要精确比较数值大小，最应该优先使用的视觉通道是？",
+            "en": "Which channel best supports precise magnitude comparison?"
+          },
+          "options": [
+            {
+              "zh": "位置 Position",
+              "en": "Position"
+            },
+            {
+              "zh": "面积 Area",
+              "en": "Area"
+            },
+            {
+              "zh": "色相 Hue",
+              "en": "Hue"
+            },
+            {
+              "zh": "形状 Shape",
+              "en": "Shape"
+            }
+          ],
+          "a": 0,
+          "exp": {
+            "zh": "Mackinlay 排序中位置精度最高，约为面积/颜色的 3～5 倍。",
+            "en": "Mackinlay ranks position first, roughly 3–5× more accurate than area or color."
+          }
+        }
+      ]
+    },
+    {
+      "ch": 2,
+      "items": [
+        {
+          "sec": "2-1",
+          "q": {
+            "zh": "Card 模型中「把数据表字段绑定到位置/颜色等通道」是哪一步？",
+            "en": "In Card's pipeline, binding table fields to channels like position/color is which step?"
+          },
+          "options": [
+            {
+              "zh": "数据变换",
+              "en": "Data transformation"
+            },
+            {
+              "zh": "视觉映射",
+              "en": "Visual mapping"
+            },
+            {
+              "zh": "视图渲染",
+              "en": "View rendering"
+            },
+            {
+              "zh": "数据采集",
+              "en": "Data acquisition"
+            }
+          ],
+          "a": 1,
+          "exp": {
+            "zh": "数据表 → 视觉结构 这一步叫视觉映射，产出「视觉结构」。",
+            "en": "Data table → visual structure is visual mapping; its output is the visual structure."
+          }
+        },
+        {
+          "sec": "2-2",
+          "q": {
+            "zh": "几万条原始记录直接画散点导致糊成一片，正确做法是？",
+            "en": "Tens of thousands of raw points turn into mush. What should you do?"
+          },
+          "options": [
+            {
+              "zh": "换更鲜艳的颜色",
+              "en": "Use brighter colors"
+            },
+            {
+              "zh": "先聚合/采样再画",
+              "en": "Aggregate or sample first"
+            },
+            {
+              "zh": "把点画得更小",
+              "en": "Draw smaller dots"
+            },
+            {
+              "zh": "改成饼图",
+              "en": "Switch to a pie chart"
+            }
+          ],
+          "a": 1,
+          "exp": {
+            "zh": "可视化传达的是结构：先在变换环节做聚合或采样（如 d3.rollup）。",
+            "en": "Visualization conveys structure: aggregate or sample in the transform stage (e.g. d3.rollup)."
+          }
+        }
+      ]
+    },
+    {
+      "ch": 3,
+      "items": [
+        {
+          "sec": "3-2",
+          "q": {
+            "zh": "表示「温度异常：负偏离 ↔ 正偏离」，应选哪类 colormap？",
+            "en": "For temperature anomalies (negative ↔ positive), which colormap family fits?"
+          },
+          "options": [
+            {
+              "zh": "顺序型 Sequential",
+              "en": "Sequential"
+            },
+            {
+              "zh": "发散型 Diverging",
+              "en": "Diverging"
+            },
+            {
+              "zh": "定性型 Qualitative",
+              "en": "Qualitative"
+            },
+            {
+              "zh": "彩虹色 Rainbow",
+              "en": "Rainbow"
+            }
+          ],
+          "a": 1,
+          "exp": {
+            "zh": "存在有意义的零点（正常值），两侧分别编码负/正偏离，用发散型。",
+            "en": "There is a meaningful midpoint (normal), so encode both sides with a diverging ramp."
+          }
+        },
+        {
+          "sec": "3-6",
+          "q": {
+            "zh": "给「城市 / 品种」这类类别数据配色，正确做法是？",
+            "en": "How should you color categorical data like cities or species?"
+          },
+          "options": [
+            {
+              "zh": "用连续渐变色",
+              "en": "Use a continuous gradient"
+            },
+            {
+              "zh": "用定性配色（色相区分、明度接近）",
+              "en": "Use a qualitative palette (distinct hues, similar lightness)"
+            },
+            {
+              "zh": "用彩虹色 jet",
+              "en": "Use the rainbow jet map"
+            },
+            {
+              "zh": "全部用同一个颜色",
+              "en": "Use one single color"
+            }
+          ],
+          "a": 1,
+          "exp": {
+            "zh": "类别无顺序，渐变会暗示大小关系；应选明度接近、色相互分的定性配色。",
+            "en": "Categories have no order; gradients imply magnitude. Use qualitative palettes with similar lightness."
+          }
+        }
+      ]
+    },
+    {
+      "ch": 4,
+      "items": [
+        {
+          "sec": "4-2",
+          "q": {
+            "zh": "条形图的纵轴可以从 90 开始以「放大差异」吗？",
+            "en": "Can a bar chart's axis start at 90 to 'amplify' differences?"
+          },
+          "options": [
+            {
+              "zh": "可以，只要标注清楚",
+              "en": "Yes, as long as it is labeled"
+            },
+            {
+              "zh": "不可以，条形图必须从 0 开始",
+              "en": "No, bar charts must start at zero"
+            },
+            {
+              "zh": "只有折线图才必须从 0 开始",
+              "en": "Only line charts must start at zero"
+            },
+            {
+              "zh": "取决于数据量",
+              "en": "It depends on the data volume"
+            }
+          ],
+          "a": 1,
+          "exp": {
+            "zh": "条形靠长度编码，截断基線会让长度比例失真；折线图看趋势则不强制 0 基线。",
+            "en": "Bars encode length, so a truncated baseline distorts ratios; line charts show trends and needn't start at zero."
+          }
+        },
+        {
+          "sec": "4-4",
+          "q": {
+            "zh": "Cleveland 的 45° 黄金角说的是什么？",
+            "en": "What is Cleveland's 45° banking about?"
+          },
+          "options": [
+            {
+              "zh": "图例要放在 45° 位置",
+              "en": "Legends belong at 45°"
+            },
+            {
+              "zh": "把关键趋势的平均斜率调到 45° 附近，判断最准",
+              "en": "Bank the average slope of key trends to ~45° for most accurate judgments"
+            },
+            {
+              "zh": "饼图扇区不要超过 45°",
+              "en": "Pie sectors must stay under 45°"
+            },
+            {
+              "zh": "颜色明度差要大于 45",
+              "en": "Lightness difference must exceed 45"
+            }
+          ],
+          "a": 1,
+          "exp": {
+            "zh": "人眼对 45° 附近的斜率最敏感，作图时应尽量把关键趋势摆到该角度。",
+            "en": "Slope judgments peak near 45°, so bank key trends to that angle."
+          }
+        }
+      ]
+    },
+    {
+      "ch": 5,
+      "items": [
+        {
+          "sec": "5-1",
+          "q": {
+            "zh": "时间序列中缺失了若干日期，时间轴应该如何处理？",
+            "en": "With missing dates in a time series, how should the axis be handled?"
+          },
+          "options": [
+            {
+              "zh": "按记录序号等距排列",
+              "en": "Space by record index"
+            },
+            {
+              "zh": "用时间尺度并如实留出空白",
+              "en": "Use a time scale and leave honest gaps"
+            },
+            {
+              "zh": "用线性插值补上",
+              "en": "Linearly interpolate the gaps"
+            },
+            {
+              "zh": "删掉缺失前后的数据",
+              "en": "Drop data around the gaps"
+            }
+          ],
+          "a": 1,
+          "exp": {
+            "zh": "类别尺度会压缩采样密集的时段；时间尺度如实反映间隔，折线在缺失处断开。",
+            "en": "Categorical scales compress dense periods; a time scale keeps true spacing and breaks the line at gaps."
+          }
+        },
+        {
+          "sec": "5-3",
+          "q": {
+            "zh": "想看「每年 12 月销量最高」这种周期规律，哪种图最合适？",
+            "en": "To see a yearly December sales peak, which chart fits best?"
+          },
+          "options": [
+            {
+              "zh": "单条长折线图",
+              "en": "One long line chart"
+            },
+            {
+              "zh": "日历热图 / 螺旋图",
+              "en": "Calendar heatmap / spiral"
+            },
+            {
+              "zh": "饼图",
+              "en": "Pie chart"
+            },
+            {
+              "zh": "散点图",
+              "en": "Scatter plot"
+            }
+          ],
+          "a": 1,
+          "exp": {
+            "zh": "周期规律需要按周期折叠的布局：日历热图看「哪天/哪月」，螺旋同时看周期与长期趋势。",
+            "en": "Cycles need cycle-folding layouts: heatmaps for 'which day/month', spirals for cycle plus trend."
+          }
+        }
+      ]
+    }
+  ]
+}

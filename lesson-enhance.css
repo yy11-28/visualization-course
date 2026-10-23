@@ -1,0 +1,281 @@
+/* =============================================================
+ * lesson-enhance.css — 章节页排版增强（v2.0）
+ *
+ * 设计原则：
+ *   1. 不改动任何正文内容与 DOM 结构，仅调整「视觉尺度」；
+ *   2. 面向教室投影：更大的字号 / 更舒展的行距 / 更强的层次；
+ *   3. 选择器尽量贴合现有 class，避免与章节自带样式打架。
+ * ============================================================= */
+
+/* ---------- 基础排版：投影友好 ---------- */
+body {
+  font-size: 17px;
+  line-height: 1.78;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- 顶部栏 ---------- */
+.course-topbar {
+  box-shadow: 0 1px 3px rgba(15, 23, 42, .06);
+}
+
+.course-topbar .brand {
+  font-weight: 700;
+  letter-spacing: -.2px;
+}
+
+.course-topbar .tabs a {
+  border-radius: 999px;
+  transition: background .16s, color .16s;
+}
+
+/* ---------- 章节头 ---------- */
+.lesson-header {
+  padding: 12px 32px;
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .06);
+}
+
+.lesson-header h1 {
+  font-size: 20px;
+  letter-spacing: -.4px;
+}
+
+.lesson-header .subtitle {
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+.header-tip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .07);
+  border: 1px solid rgba(255, 255, 255, .10);
+  line-height: 1.6;
+}
+
+/* ---------- 主区域 ---------- */
+.lesson-main {
+  /* 缩窄章节目录列，让中间内容区域更宽 */
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 30px;
+  padding: 22px 32px 48px 0;
+  /* 拉宽内容区：不再限制最大宽度 */
+  max-width: none;
+}
+
+/* ---------- 侧边目录 ---------- */
+.chapter-nav {
+  border-radius: var(--r-md, 13px);
+  box-shadow: 0 2px 12px rgba(15, 23, 42, .06);
+  padding: 22px 16px;
+  top: 24px;
+}
+
+.chapter-nav h3 {
+  font-size: 12.5px;
+  letter-spacing: 1.2px;
+  padding: 0 8px;
+  margin-bottom: 15px;
+}
+
+.chapter-nav li { margin: 4px 0; }
+
+.chapter-nav a {
+  font-size: 15px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  line-height: 1.55;
+  transition: background .16s, color .16s;
+}
+
+.chapter-nav a:hover { background: #f1f5f9; }
+
+.chapter-nav a.active {
+  background: #eef2ff;
+  color: #3730a3;
+  border-left-color: #4f46e5;
+  font-weight: 700;
+}
+
+.nav-tip {
+  margin-top: 10px;
+  padding-top: 10px;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.nav-tip a { display: block; padding: 2px 0; }
+.nav-tip br { display: none; }
+.lesson-actions a { display: block; padding: 2px 0; }
+
+/* ---------- 内容卡片 ---------- */
+.chapter-content {
+  border-radius: var(--r-lg, 18px);
+  box-shadow: 0 2px 12px rgba(15, 23, 42, .06);
+  border-color: #e6eaf2;
+}
+
+.chapter {
+  padding: 38px 48px 52px;
+}
+
+.chapter h2 {
+  font-size: 29px;
+  letter-spacing: -.5px;
+  margin-bottom: 10px;
+}
+
+.chapter-subtitle {
+  font-size: 16px;
+  margin-bottom: 26px;
+}
+
+/* ---------- Tab ---------- */
+.tabs {
+  gap: 6px;
+  margin-bottom: 30px;
+  border-bottom-color: #e6eaf2;
+}
+
+.tab-btn {
+  padding: 13px 24px;
+  font-size: 16.5px;
+  font-weight: 600;
+  border-radius: 11px 11px 0 0;
+  transition: background .16s, color .16s, border-color .16s;
+}
+
+/* ---------- 正文标题层级 ---------- */
+.chapter h3 {
+  font-size: 21px;
+  margin: 36px 0 14px;
+  padding-left: 14px;
+  border-left: 5px solid #4f46e5;
+  line-height: 1.5;
+}
+
+.chapter h3:first-of-type { margin-top: 10px; }
+
+.chapter h4 {
+  font-size: 18px;
+  margin: 26px 0 12px;
+  color: var(--c-ink, #0b1220);
+}
+
+/* ---------- 段落 / 列表 ---------- */
+.chapter p {
+  margin: 0 0 16px;
+  line-height: 1.85;
+}
+
+.chapter ul, .chapter ol {
+  margin: 0 0 18px;
+  padding-left: 26px;
+}
+
+.chapter li {
+  margin: 8px 0;
+  line-height: 1.8;
+}
+
+/* ---------- 关键点 ---------- */
+.key-point {
+  border-left: 5px solid #9B7FE0;
+  background: #fffbeb;
+  padding: 18px 22px;
+  border-radius: 0 12px 12px 0;
+  margin: 18px 0 24px;
+  line-height: 1.82;
+}
+
+.code-purpose {
+  color: #64748b;
+  font-size: 15.5px;
+  margin-bottom: 12px;
+}
+
+/* ---------- 代码块 ---------- */
+pre {
+  border-radius: 13px;
+  padding: 19px 22px;
+  font-size: 15px;
+  line-height: 1.78;
+  overflow-x: auto;
+  margin: 0 0 20px;
+  border: 1px solid #e6eaf2;
+}
+
+pre code { background: transparent; padding: 0; }
+
+.star { color: #9B7FE0; font-weight: 700; }
+.cmt  { color: #94a3b8; font-style: italic; }
+.str  { color: #059669; }
+
+/* ---------- 表格 ---------- */
+.chapter table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 22px;
+  font-size: 15.5px;
+}
+
+.chapter th, .chapter td {
+  border: 1px solid #e6eaf2;
+  padding: 12px 16px;
+  text-align: left;
+  line-height: 1.7;
+}
+
+.chapter th {
+  background: var(--c-soft, #f8fafc);
+  font-weight: 700;
+  color: #0b1220;
+}
+
+/* ---------- 翻页器 ---------- */
+.chapter-pager {
+  max-width: 1560px;
+  margin: 0 auto 60px;
+  padding: 0 40px;
+}
+
+/* ---------- 响应式 ---------- */
+/* 中等宽屏：缩小留白与内容内边距，避免正文行过宽又保证不挤 */
+@media (max-width: 1400px) {
+  .lesson-main { padding: 26px 28px 48px 0; gap: 24px; }
+  .chapter { padding: 32px 36px 44px; }
+  .chapter-pager { padding: 0 28px; }
+}
+
+/* 窄屏：释放侧边目录 */
+@media (max-width: 900px) {
+  .lesson-main { grid-template-columns: 1fr; padding: 20px 18px 40px 0; }
+  .chapter-nav { position: static; }
+  .chapter { padding: 24px 22px 32px; }
+  .lesson-header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px 20px; }
+}
+
+/* ---------- 悬浮卡片：目录与内容与背景区分 ---------- */
+body {
+  background: #e8edf4;
+}
+
+.chapter-nav {
+  border-color: #e4e9f1;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, .12), 0 2px 6px rgba(15, 23, 42, .06);
+}
+
+.chapter-content {
+  border-color: #e4e9f1;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, .12), 0 2px 6px rgba(15, 23, 42, .06);
+}
+
+/* ---------- 打印 ---------- */
+@media print {
+  .course-topbar, .chapter-nav, .chapter-pager, .reader-bar,
+  .toc-drawer, .toc-mask { display: none !important; }
+  body { font-size: 10.5pt; background: #fff; }
+  .lesson-main { display: block; padding: 0; max-width: none; }
+  .chapter-content { border: 0; box-shadow: none; }
+  pre { white-space: pre-wrap; word-break: break-word; }
+  .chapter { break-inside: avoid; }
+}

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>第 2 章 · 数据可视化流程 | vis</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="第 2 章 · 数据可视化流程" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="visualization lesson" />
+<meta property="og:description" content="visualization lesson" />
+<link rel="canonical" href="https://cinger007.github.io/vis/lesson-02/lecture.html" />
+<meta property="og:url" content="https://cinger007.github.io/vis/lesson-02/lecture.html" />
+<meta property="og:site_name" content="vis" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="第 2 章 · 数据可视化流程" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"visualization lesson","headline":"第 2 章 · 数据可视化流程","url":"https://cinger007.github.io/vis/lesson-02/lecture.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/vis/assets/css/style.css?v=35a66ecb5e35e8c4f2c54a007cb6c590255b6f06">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/vis/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://cinger007.github.io/vis/">vis</a></h1>
+      
+
+      <h1 id="第-2-章--数据可视化流程">第 2 章 · 数据可视化流程</h1>
+
+<blockquote>
+  <p>对应你的飞书文档：<strong>4. 数据可视化流程.docx</strong></p>
+
+  <p>源码 + 演示：见 <code class="language-plaintext highlighter-rouge">lesson/index.html</code>（讲解 ⇄ 代码 ⇄ 演示 三 tab 集成页面）</p>
+</blockquote>
+
+<p>本章用 4 个章节把可视化完整链路拆给你看：<strong>流程模型 → 数据聚合 → 树布局 → 列表渲染</strong>。
+陈为教材中的 Card、Mackinlay、van Wijk 三个理论模型，D3.hierarchy 模块，DOM 事件机制，都会嵌在案例的”为什么这么做”位置。</p>
+
+<hr />
+
+<h2 id="21-数据可视化流程card--mackinlay--van-wijk">2.1 数据可视化流程（Card · Mackinlay · van Wijk）</h2>
+
+<h3 id="你的原案例">你的原案例</h3>
+
+<p>3 个可视化流程模型：</p>
+<ol>
+  <li>参考 Card 1999 模型绘制流程图（Box Flowcharts）</li>
+  <li>Mackinlay 自动化准则</li>
+  <li>van Wijk 模型（含交互反馈）</li>
+</ol>
+
+<p>原图是一张概念图。本节课用 D3 重画这张概念图，每个节点点击后展开在三个模型中的对应细节。</p>
+
+<h3 id="嵌入的理论">嵌入的理论</h3>
+
+<p><strong>Card 数据流模型（Card, Mackinlay &amp; Shneiderman, 1999）</strong></p>
+
+<p>数据可视化的”管道”：</p>
+<ul>
+  <li><strong>原始数据</strong> (Raw Data) → <strong>数据表</strong> (Data Tables) → <strong>视觉结构</strong> (Visual Structure) → <strong>视图</strong> (Views)</li>
+  <li>嵌套变换：D → T → V → C/L/S（Camera/Light/Screen）</li>
+</ul>
+
+<p><strong>Mackinlay 自动化准则（Mackinlay 1986）</strong></p>
+
+<p>对每种数据类型，自动选”量化准确性最高”的视觉通道：</p>
+<ul>
+  <li>数值型 → 位置（量化误差最小）</li>
+  <li>有序型 → 长度、密度</li>
+  <li>类别型 → 色调、形状</li>
+</ul>
+
+<p><strong>van Wijk 反馈模型（van Wijk 2005）</strong></p>
+
+<p>强调<strong>交互反馈循环</strong>：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>View ⇆ Filter ⇆ Param ⇆ Other Views
+</code></pre></div></div>
+
+<h3 id="关键代码--svg-流程图节点">关键代码 ① SVG 流程图节点</h3>
+
+<p>⭐ <strong>标记要点</strong>：SVG <code class="language-plaintext highlighter-rouge">&lt;marker&gt;</code> + <code class="language-plaintext highlighter-rouge">marker-end</code> 定义箭头；D3 classed() 做状态切换。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 1. 用 &lt;defs&gt; + &lt;marker&gt; 定义箭头</span>
+<span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="dl">"</span><span class="s2">defs</span><span class="dl">"</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="dl">"</span><span class="s2">marker</span><span class="dl">"</span><span class="p">)</span>
+   <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">id</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">arrowhead</span><span class="dl">"</span><span class="p">)</span>
+   <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">refX</span><span class="dl">"</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>            <span class="c1">// 箭头位置校准</span>
+   <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">orient</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">auto</span><span class="dl">"</span><span class="p">)</span>      <span class="c1">// 跟随线方向旋转</span>
+   <span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="dl">"</span><span class="s2">path</span><span class="dl">"</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">d</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">M0,-5L10,0L0,5</span><span class="dl">"</span><span class="p">);</span>
+
+<span class="c1">// 2. 用 marker-end 引用箭头</span>
+<span class="nx">svg</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="dl">"</span><span class="s2">line</span><span class="dl">"</span><span class="p">)</span>
+   <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">marker-end</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">url(#arrowhead)</span><span class="dl">"</span><span class="p">)</span>  <span class="c1">// 把箭头"装"到线段末端</span>
+   <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">x1</span><span class="dl">"</span><span class="p">,</span> <span class="nx">x1</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">y1</span><span class="dl">"</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span>
+   <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">x2</span><span class="dl">"</span><span class="p">,</span> <span class="nx">x2</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">y2</span><span class="dl">"</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+
+<span class="c1">// 3. classed 状态管理（关键）</span>
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="dl">"</span><span class="s2">.node</span><span class="dl">"</span><span class="p">).</span><span class="nx">classed</span><span class="p">(</span><span class="dl">"</span><span class="s2">selected</span><span class="dl">"</span><span class="p">,</span> <span class="nx">n</span> <span class="o">=&gt;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">d</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><strong>关键点解释</strong>：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">marker-end="url(#arrowhead)"</code> 是 SVG 引用的方式 —— 用 URL 引用 <code class="language-plaintext highlighter-rouge">&lt;defs&gt;</code> 里定义的形状。</li>
+  <li><code class="language-plaintext highlighter-rouge">classed("selected", predicate)</code> 接收布尔函数，一次性切换所有节点状态，<strong>比手动 forEach 简洁</strong>。</li>
+</ul>
+
+<h3 id="教学要点">教学要点</h3>
+
+<ul>
+  <li><strong>三个模型描述同一件事的不同侧面</strong>
+    <ul>
+      <li>Card 给”管道”、Mackinlay 给”自动决策”、van Wijk 给”反馈环”</li>
+      <li><strong>是叠加关系，不是冲突关系</strong></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="22-数据变换原数据--数据表d3rollup-聚合">2.2 数据变换：原数据 → 数据表（d3.rollup 聚合）</h2>
+
+<blockquote>
+  <p><strong>在流程中的位置</strong>：Card 1999 数据流模型第一段箭头「原始数据 → 数据表」。这是 <strong>数据变换（Data Transformation）</strong>。</p>
+</blockquote>
+
+<h3 id="你的原案例-1">你的原案例</h3>
+
+<p>用新生数据按”专业 / 班级”做 <strong>rollup 分桶聚合</strong>。
+你演示的核心是 d3.rollup 的链式调用 —— 一个函数完成多维度分组。</p>
+
+<h3 id="嵌入的理论-1">嵌入的理论</h3>
+
+<p><strong>理论补丁：数据变换的四大操作（Card 1999 D 层）</strong></p>
+
+<p>从「原始数据」到「数据表」，D 层做四类操作：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>操作</th>
+      <th>做什么</th>
+      <th>D3 实现</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>清洗 / 过滤</td>
+      <td>去缺失、去异常、筛选满足条件的行</td>
+      <td><code class="language-plaintext highlighter-rouge">.filter()</code>、<code class="language-plaintext highlighter-rouge">d3.csv(row)</code> 回调</td>
+    </tr>
+    <tr>
+      <td>聚合 / 汇总</td>
+      <td>按 key 分组，把同组归约为一个值</td>
+      <td><code class="language-plaintext highlighter-rouge">d3.rollup()</code>、<code class="language-plaintext highlighter-rouge">d3.group()</code></td>
+    </tr>
+    <tr>
+      <td>连接 / 关联</td>
+      <td>按键把两张表拼起来</td>
+      <td><code class="language-plaintext highlighter-rouge">d3.map</code> + 手动索引</td>
+    </tr>
+    <tr>
+      <td>派生 / 衍生</td>
+      <td>由已有列算出新列（如”班级”→”专业”）</td>
+      <td>row 回调里算一个新字段</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>本节演示的 rollup 聚合属于”聚合”这一行</strong>。读懂这张表，你才知道数据变换是整个流水线的”第一公里”。</p>
+
+<p><strong>d3.rollup 是”按 key 分桶、再 reduce 一次”的函数式组合</strong>：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">rollup</span><span class="p">(</span>
+  <span class="nx">data</span><span class="p">,</span>                    <span class="c1">// 输入数组</span>
+  <span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">v</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>           <span class="c1">// reducer</span>
+  <span class="nx">d</span> <span class="o">=&gt;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">major</span><span class="p">,</span>            <span class="c1">// key1（外层）</span>
+  <span class="nx">d</span> <span class="o">=&gt;</span> <span class="nx">d</span><span class="p">.</span><span class="kd">class</span>             <span class="c1">// key2（内层）</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<p>它返回 <strong><code class="language-plaintext highlighter-rouge">Map</code></strong>（不是数组、不是对象）：</p>
+<ul>
+  <li>遍历用 <code class="language-plaintext highlighter-rouge">for ([k, v] of m)</code> 或 <code class="language-plaintext highlighter-rouge">m.entries()</code></li>
+  <li>嵌套 rollup 出嵌套 Map</li>
+  <li>与 <code class="language-plaintext highlighter-rouge">d3.group</code> 的差别：rollup 把组内数据归约成<strong>一个值</strong>，group 保留<strong>原数组</strong></li>
+</ul>
+
+<p><strong>OLAP 切片/切块/钻取</strong>（Codd 1993）</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>OLAP 操作</th>
+      <th>实际对应</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>切片 (Slice)</td>
+      <td><code class="language-plaintext highlighter-rouge">.filter()</code> 后 rollup</td>
+    </tr>
+    <tr>
+      <td>切块 (Dice)</td>
+      <td>多 key rollup</td>
+    </tr>
+    <tr>
+      <td>钻取 (Drill)</td>
+      <td>嵌套 rollup + 递归展开</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>教学要点</strong>：可视化系统的”下钻交互”通常背后就是 rollup + hierarchy 的组合。</p>
+
+<h3 id="关键代码--双层-rollup">关键代码 ① 双层 rollup</h3>
+
+<p>⭐ <strong>标记要点</strong>：d3.rollup 的 keys 参数是 rest 参数（…keys）。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">nested</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">rollup</span><span class="p">(</span>
+  <span class="nx">students</span><span class="p">,</span>
+  <span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">v</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>           <span class="c1">// 每组聚合为单一值（这里是 count）</span>
+  <span class="nx">d</span> <span class="o">=&gt;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">major</span><span class="p">,</span>            <span class="c1">// 外层 key</span>
+  <span class="nx">d</span> <span class="o">=&gt;</span> <span class="nx">d</span><span class="p">.</span><span class="kd">class</span>             <span class="c1">// 内层 key（rest 参数，可继续加）</span>
+<span class="p">);</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="p">[</span><span class="nx">major</span><span class="p">,</span> <span class="nx">inner</span><span class="p">]</span> <span class="k">of</span> <span class="nx">nested</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="p">[</span><span class="nx">cls</span><span class="p">,</span> <span class="nx">count</span><span class="p">]</span> <span class="k">of</span> <span class="nx">inner</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">major</span><span class="p">,</span> <span class="nx">cls</span><span class="p">,</span> <span class="nx">count</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="关键代码--用正则提取专业">关键代码 ② 用正则提取专业</h3>
+
+<p>⭐ <strong>标记要点</strong>：正则 <code class="language-plaintext highlighter-rouge">/^(.+?)(\d+班)$/</code> —— <code class="language-plaintext highlighter-rouge">.+?</code> 是<strong>非贪婪</strong>匹配。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">csv</span><span class="p">(</span><span class="dl">"</span><span class="s2">./data/newstudent.csv</span><span class="dl">"</span><span class="p">,</span> <span class="nx">d</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">cls</span> <span class="o">=</span> <span class="nx">d</span><span class="p">[</span><span class="dl">"</span><span class="s2">班级</span><span class="dl">"</span><span class="p">].</span><span class="nx">trim</span><span class="p">();</span>
+  <span class="kd">const</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">cls</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/^</span><span class="se">(</span><span class="sr">.+</span><span class="se">?)(\d</span><span class="sr">+班</span><span class="se">)</span><span class="sr">$/</span><span class="p">);</span>  <span class="c1">// 中间非贪婪 + 末尾"数字+班"</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="na">id</span><span class="p">:</span>    <span class="o">+</span><span class="nx">d</span><span class="p">[</span><span class="dl">"</span><span class="s2">序号</span><span class="dl">"</span><span class="p">],</span>
+    <span class="na">name</span><span class="p">:</span>  <span class="nx">d</span><span class="p">[</span><span class="dl">"</span><span class="s2">姓名</span><span class="dl">"</span><span class="p">].</span><span class="nx">trim</span><span class="p">(),</span>
+    <span class="na">class</span><span class="p">:</span> <span class="nx">cls</span><span class="p">,</span>
+    <span class="na">major</span><span class="p">:</span> <span class="nx">m</span> <span class="p">?</span> <span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">:</span> <span class="nx">cls</span><span class="p">,</span>  <span class="c1">// "软件工程1班" → "软件工程"</span>
+  <span class="p">};</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p><strong>关键点解释</strong>：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">.+?</code> 是<strong>非贪婪</strong>匹配 —— 让中间尽可能短、末尾留给 <code class="language-plaintext highlighter-rouge">\d+班</code></li>
+  <li>没这个非贪婪：<code class="language-plaintext highlighter-rouge">.+</code> 会把整串都匹配走，<code class="language-plaintext highlighter-rouge">m[1]</code> 就是 undefined</li>
+  <li><strong>这类正则坑学生常踩，必须掌握</strong></li>
+</ul>
+
+<hr />
+
+<h2 id="23-视觉映射数据表--视觉结构reingold-tilford--通道理论">2.3 视觉映射：数据表 → 视觉结构（Reingold-Tilford + 通道理论）</h2>
+
+<blockquote>
+  <p><strong>在流程中的位置</strong>：接上节 2.2，我们有了”数据表”。这是第二段箭头「数据表 → 视觉结构」，即 <strong>视觉映射（Visual Mapping）</strong>。</p>
+</blockquote>
+
+<h3 id="你的原案例-2">你的原案例</h3>
+
+<p>你的 4.2 节提到”树形结构可视化”。本节展开<strong>树布局算法</strong>原理 —— 拿到层级数据后，怎么把节点摆到屏幕上不打架？本质上是用「位置通道」做视觉映射。</p>
+
+<h3 id="嵌入的理论-2">嵌入的理论</h3>
+
+<p><strong>理论核心：什么是视觉通道？Mackinlay 的排名（图 1）</strong></p>
+
+<p>视觉通道是”把数据编码到视觉元素上”的载体：位置、长度、面积、角度、颜色、形状、纹理。<strong>Mackinlay 1986</strong> 给出经典排名：对<em>不同数据类型</em>，各通道的量化精确度不同。</p>
+
+<blockquote>
+  <p>📷 <strong>图 1 · Mackinlay 1986 通道排名</strong>（网页见 <code class="language-plaintext highlighter-rouge">img/01-mackinlay-ranking.png</code>）
+对 Quantitative / Ordinal / Nominal 三类数据，各通道量化精确度排序。位置（Position）永远最准。</p>
+</blockquote>
+
+<ul>
+  <li><strong>位置（Position）</strong>：三种数据类型都是第一</li>
+  <li><strong>定量数据</strong>：长度 → 角度 → 斜率 → 面积（长条图比面积图准）</li>
+  <li><strong>名义数据</strong>：位置 → 色调（hue）→ 纹理 → 连接 → 形状</li>
+</ul>
+
+<p><strong>理论核心：图元（marks）与视觉通道（图 2、图 3）</strong></p>
+
+<p>视觉结构由 <strong>图元（mark）</strong> 打底：点（Point）、线（Line）、面（Area）。再通过 <strong>通道</strong> 做记号：位置、颜色、形状、倾斜、大小。</p>
+
+<blockquote>
+  <p>📷 <strong>图 2 · 图元三族</strong>（<code class="language-plaintext highlighter-rouge">img/02-marks-points-lines-areas.png</code>）：点 / 线 / 面，是视觉结构的骨架。</p>
+
+  <p>📷 <strong>图 3 · 视觉通道族</strong>（<code class="language-plaintext highlighter-rouge">img/03-channels-position-color-shape.png</code>）：位置（水平/垂直/两者）、颜色、形状、倾斜、大小（长度/面积/体积）。</p>
+</blockquote>
+
+<p><strong>理论核心：两类通道 —— 幅度 vs 标识（图 4、图 5）</strong></p>
+
+<p>按”能不能表达量的多少”，通道分两类：</p>
+<ul>
+  <li><strong>幅度通道（Magnitude）</strong>：表达<em>有序/定量</em>属性（共用尺度位置最准，长度/倾斜/面积次之，亮度/饱和度/体积最弱）</li>
+  <li><strong>标识通道（Identity）</strong>：表达<em>类别</em>属性（空间区域、色调、运动、形状 —— 能区分”不同类”但分不出”谁多谁少”）</li>
+</ul>
+
+<blockquote>
+  <p>📷 <strong>图 4 · 幅度通道</strong>（<code class="language-plaintext highlighter-rouge">img/04-magnitude-channels.png</code>）：有序属性，按精确度排序。</p>
+
+  <p>📷 <strong>图 5 · 标识通道</strong>（<code class="language-plaintext highlighter-rouge">img/05-identity-channels.png</code>）：类别属性 —— 空间区域 / 色调 / 运动 / 形状。</p>
+</blockquote>
+
+<p><strong>本节案例的落点</strong>：树布局（Reingold-Tilford）本质上就是一种<strong>视觉映射</strong> —— 用<em>位置通道</em>把层级关系编码成”父在上、子在下的树”。</p>
+
+<p><strong>Reingold-Tilford 算法（1981，至今仍是 d3.tree() 的核心）</strong></p>
+
+<p>核心思路（3 遍遍历）：</p>
+<ol>
+  <li><strong>第一遍（自底向上）：</strong>对每个父节点，计算其左右子树”占用多少横向空间”</li>
+  <li><strong>第二遍（自顶向下）：</strong>给每个节点分配<strong>绝对 x 坐标</strong>（保证兄弟节点紧贴父节点中线且不重叠）</li>
+  <li><strong>第三遍：</strong>处理”线程”（threads）—— 修复子节点跨父中线时的对齐</li>
+</ol>
+
+<p>复杂度：<strong>O(n)</strong> 时间。</p>
+
+<p><strong>d3-hierarchy 模块全家桶：</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>API</th>
+      <th>用途</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">hierarchy(data)</code></td>
+      <td>嵌套 data → 计算 parent/children/depth</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">tree().size([h, w])</code></td>
+      <td>Reingold-Tilford 算法，左右布局</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">cluster().size([h, w])</code></td>
+      <td>所有叶子对齐到同一深度</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">treemap().tile(...)</code></td>
+      <td>面积布局（slice-and-dice / squarified）</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pack().radius(...)</code></td>
+      <td>circle packing</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">partition().size([h, w])</code></td>
+      <td>icicle / sunburst</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="关键代码--hierarchy--tree-三步走">关键代码 ① hierarchy + tree 三步走</h3>
+
+<p>⭐ <strong>标记要点</strong>：tree.x 是深度方向、tree.y 是水平方向 —— 横向树 swap 坐标轴。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 1. hierarchy：嵌套 JSON → parent/children/depth</span>
+<span class="kd">const</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">hierarchy</span><span class="p">(</span><span class="nx">rootData</span><span class="p">);</span>
+
+<span class="c1">// 2. tree layout：x/y 坐标</span>
+<span class="kd">const</span> <span class="nx">treeLayout</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">tree</span><span class="p">().</span><span class="nx">size</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span> <span class="mi">720</span><span class="p">]);</span>
+<span class="kd">const</span> <span class="nx">treeData</span> <span class="o">=</span> <span class="nx">treeLayout</span><span class="p">(</span><span class="nx">root</span><span class="p">);</span>
+
+<span class="c1">// 3. links：path 走 linkHorizontal</span>
+<span class="nx">g</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="dl">"</span><span class="s2">.link</span><span class="dl">"</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="nx">treeData</span><span class="p">.</span><span class="nx">links</span><span class="p">()).</span><span class="nx">join</span><span class="p">(</span><span class="dl">"</span><span class="s2">path</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">d</span><span class="dl">"</span><span class="p">,</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">linkHorizontal</span><span class="p">().</span><span class="nx">x</span><span class="p">(</span><span class="nx">d</span> <span class="o">=&gt;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">y</span><span class="p">).</span><span class="nx">y</span><span class="p">(</span><span class="nx">d</span> <span class="o">=&gt;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">x</span><span class="p">));</span>  <span class="c1">// ⭐ swap</span>
+
+<span class="c1">// 4. nodes</span>
+<span class="kd">const</span> <span class="nx">ng</span> <span class="o">=</span> <span class="nx">g</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="dl">"</span><span class="s2">.node</span><span class="dl">"</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="nx">treeData</span><span class="p">.</span><span class="nx">descendants</span><span class="p">()).</span><span class="nx">join</span><span class="p">(</span><span class="dl">"</span><span class="s2">g</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">transform</span><span class="dl">"</span><span class="p">,</span> <span class="nx">d</span> <span class="o">=&gt;</span> <span class="s2">`translate(</span><span class="p">${</span><span class="nx">d</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span><span class="s2">, </span><span class="p">${</span><span class="nx">d</span><span class="p">.</span><span class="nx">x</span><span class="p">}</span><span class="s2">)`</span><span class="p">);</span>  <span class="c1">// ⭐ swap</span>
+
+<span class="nx">ng</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="dl">"</span><span class="s2">circle</span><span class="dl">"</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">r</span><span class="dl">"</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+<span class="nx">ng</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="dl">"</span><span class="s2">text</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">text-anchor</span><span class="dl">"</span><span class="p">,</span> <span class="nx">d</span> <span class="o">=&gt;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">children</span> <span class="p">?</span> <span class="dl">"</span><span class="s2">end</span><span class="dl">"</span> <span class="p">:</span> <span class="dl">"</span><span class="s2">start</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">x</span><span class="dl">"</span><span class="p">,</span> <span class="nx">d</span> <span class="o">=&gt;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">children</span> <span class="p">?</span> <span class="o">-</span><span class="mi">8</span> <span class="p">:</span> <span class="mi">8</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="nx">d</span> <span class="o">=&gt;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><strong>关键点解释</strong>：</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">treeData.x</code> 是<strong>深度方向</strong>（垂直），<code class="language-plaintext highlighter-rouge">treeData.y</code> 是<strong>水平方向</strong></li>
+  <li>所以 <code class="language-plaintext highlighter-rouge">linkHorizontal</code> 用 <code class="language-plaintext highlighter-rouge">x=d.y, y=d.x</code> —— 横向 swap</li>
+  <li><strong>这种”x 轴走 y、y 轴走 x”的 swap 是横向树特有的</strong></li>
+</ul>
+
+<h3 id="关键代码--separation">关键代码 ② separation</h3>
+
+<p>⭐ <strong>标记要点</strong>：separation 接收函数，返回 <code class="language-plaintext highlighter-rouge">[node, parent]</code> 之间的间隔倍数。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">treeLayout</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">tree</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">size</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span> <span class="mi">720</span><span class="p">])</span>
+  <span class="p">.</span><span class="nx">separation</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">parent</span> <span class="o">===</span> <span class="nx">b</span><span class="p">.</span><span class="nx">parent</span> <span class="p">?</span> <span class="mi">1</span> <span class="p">:</span> <span class="mi">2</span><span class="p">));</span>
+                              <span class="c1">//   ↑ 兄弟节点紧贴        ↑ 非兄弟至少隔 2 倍</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">0.5</code> → 全部挤一起；<code class="language-plaintext highlighter-rouge">2.0</code> → 树变宽。Demo 里有 slider 实时调。</p>
+
+<hr />
+
+<h2 id="24-视图渲染与用户交互classed--事件委托--动画-transition">2.4 视图渲染与用户交互（classed + 事件委托 + 动画 transition）</h2>
+
+<blockquote>
+  <p><strong>在流程中的位置</strong>：接上节 2.3，我们有了”视觉结构”。本节是最后两段箭头「视觉结构 → 视图」（渲染）和「视图 ↔ 用户」（交互反馈）。Card 的 V 层 + van Wijk 的反馈环都落在这里。</p>
+</blockquote>
+
+<h3 id="你的原案例-3">你的原案例</h3>
+
+<p>原文档用了 <code class="language-plaintext highlighter-rouge">classed</code> 控制节点样式、用 <code class="language-plaintext highlighter-rouge">stopPropagation</code> 阻止冒泡。重点是<strong>把 D3 树布局输出变成可交互的 HTML 列表</strong>。</p>
+
+<h3 id="嵌入的理论-3">嵌入的理论</h3>
+
+<p><strong>理论补丁：动画 —— 视图渲染的”时间维”</strong></p>
+
+<p>动画（transition）不是”花哨”，而是视图渲染在<em>时间维</em>上的展开。D3 用 <code class="language-plaintext highlighter-rouge">.transition().duration(ms)</code> 让属性从旧值平滑过渡到新值。教学价值在 <code class="language-plaintext highlighter-rouge">duration</code> 一个参数：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">duration=0</code>：瞬间跳变，看不出”变化过程”</li>
+  <li><code class="language-plaintext highlighter-rouge">duration=500</code>：0.5 秒过渡，看到展开/收缩/位移的流畅过程</li>
+  <li><code class="language-plaintext highlighter-rouge">duration&gt;1500</code>：太慢，学生开始走神</li>
+</ul>
+
+<p><strong>本节的交互 demo 特意加了 duration 滑块</strong>，现场改变这个参数，直观看到”渲染如何随时间展开”。</p>
+
+<p><strong>DOM 事件三阶段</strong>：</p>
+
+<ol>
+  <li><strong>捕获 (capturing)</strong>：window → document → … → 目标元素（从外到内）</li>
+  <li><strong>目标 (target)</strong>：目标元素本身</li>
+  <li><strong>冒泡 (bubbling)</strong>：目标元素 → … → document → window（从内到外）</li>
+</ol>
+
+<p>默认监听的是冒泡阶段。<code class="language-plaintext highlighter-rouge">e.stopPropagation()</code> 截断冒泡，让上层不再触发。</p>
+
+<p><strong>事件委托（Event Delegation）</strong>：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>问题</th>
+      <th>解法</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>列表 1000 个 li 各绑 click → 慢、内存大</td>
+      <td>给父元素（ul）绑 1 次 click</td>
+    </tr>
+    <tr>
+      <td>新增元素要重新绑</td>
+      <td>用 <code class="language-plaintext highlighter-rouge">e.target.closest('.label')</code> 找实际点击元素</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>优势</strong>：1 个监听器代替 N 个、未来新增元素自动支持。</p>
+
+<h3 id="关键代码--事件委托toggle-vs-select">关键代码 ① 事件委托（toggle vs select）</h3>
+
+<p>⭐ <strong>标记要点</strong>：toggle 按钮上 stopPropagation 阻止冒泡到 li 的 select 监听器。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">buildList</span><span class="p">(</span><span class="nx">liSel</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">label</span> <span class="o">=</span> <span class="nx">liSel</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="dl">"</span><span class="s2">span</span><span class="dl">"</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">class</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">label</span><span class="dl">"</span><span class="p">);</span>
+
+  <span class="nx">label</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">click.toggle</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// ⭐ 关键 ①：阻止冒泡 —— toggle 不该触发"选中"</span>
+    <span class="nx">event</span><span class="p">.</span><span class="nx">stopPropagation</span><span class="p">();</span>
+    <span class="nx">d</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">_collapsed</span> <span class="o">=</span> <span class="o">!</span><span class="nx">d</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">_collapsed</span><span class="p">;</span>
+    <span class="nx">render</span><span class="p">();</span>
+  <span class="p">});</span>
+
+  <span class="nx">liSel</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">click.select</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// ⭐ 关键 ②：toggle click 已被 stopPropagation 阻断，不会到这里</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="dl">"</span><span class="s2">li</span><span class="dl">"</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">li</span> <span class="o">=&gt;</span> <span class="nx">li</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="dl">"</span><span class="s2">selected</span><span class="dl">"</span><span class="p">));</span>
+    <span class="nx">liSel</span><span class="p">.</span><span class="nx">classed</span><span class="p">(</span><span class="dl">"</span><span class="s2">selected</span><span class="dl">"</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>  <span class="c1">// D3 class 切换</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>关键点解释</strong>：</p>
+<ul>
+  <li>不 stopPropagation → 点 toggle 时同时触发”切换折叠”和”选中节点”，用户看着会困惑</li>
+  <li>这是 DOM 事件机制的核心教学点</li>
+</ul>
+
+<h3 id="关键代码--嵌套递归-buildlist">关键代码 ② 嵌套递归 buildList</h3>
+
+<p>⭐ <strong>标记要点</strong>：<code class="language-plaintext highlighter-rouge">selection.each()</code> + <code class="language-plaintext highlighter-rouge">d3.select(this)</code> 是 D3 与原生 DOM 互操作的关键模式。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">$tree</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="dl">""</span><span class="p">;</span>  <span class="c1">// 全量重画（树结构变化没法增量更新）</span>
+  <span class="kd">const</span> <span class="nx">ul</span> <span class="o">=</span> <span class="nx">d3</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="dl">"</span><span class="s2">ul</span><span class="dl">"</span><span class="p">);</span>
+  <span class="nx">ul</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="dl">"</span><span class="s2">li</span><span class="dl">"</span><span class="p">).</span><span class="nx">data</span><span class="p">([</span><span class="nx">root</span><span class="p">]).</span><span class="nx">join</span><span class="p">(</span><span class="dl">"</span><span class="s2">li</span><span class="dl">"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="nx">buildList</span><span class="p">(</span><span class="nx">d3</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="k">this</span><span class="p">),</span> <span class="nx">d</span><span class="p">);</span> <span class="p">});</span>
+  <span class="nx">$tree</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">ul</span><span class="p">.</span><span class="nx">node</span><span class="p">());</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>关键点解释</strong>：</p>
+<ul>
+  <li>D3 没有”智能更新”树结构（层级变化）的 API —— 全量重画最简单</li>
+  <li><code class="language-plaintext highlighter-rouge">selection.each()</code> 配合 <code class="language-plaintext highlighter-rouge">d3.select(this)</code> 把原生元素转回 selection</li>
+</ul>
+
+<h3 id="关键代码--d3-过渡动画transition--duration">关键代码 ③ D3 过渡动画（transition + duration）</h3>
+
+<p>⭐ <strong>标记要点</strong>：<code class="language-plaintext highlighter-rouge">transition + duration</code> = 让属性随时间平滑变化。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 关键：transition + duration = 让属性随时间平滑变化</span>
+<span class="nx">svg</span><span class="p">.</span><span class="nx">selectAll</span><span class="p">(</span><span class="dl">"</span><span class="s2">.node</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">transition</span><span class="p">()</span>                    <span class="c1">// 进入过渡状态</span>
+  <span class="p">.</span><span class="nx">duration</span><span class="p">(</span><span class="nx">DURATION</span><span class="p">)</span>              <span class="c1">// 时长（ms），滑块控制</span>
+  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">transform</span><span class="dl">"</span><span class="p">,</span> <span class="nx">d</span> <span class="o">=&gt;</span> <span class="s2">`translate(</span><span class="p">${</span><span class="nx">d</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span><span class="s2">, </span><span class="p">${</span><span class="nx">d</span><span class="p">.</span><span class="nx">x</span><span class="p">}</span><span class="s2">)`</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">opacity</span><span class="dl">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="c1">// 新节点进入时：先设 opacity=0，再过渡到 1 → 淡入效果</span>
+<span class="nx">ng</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">opacity</span><span class="dl">"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">transition</span><span class="p">().</span><span class="nx">duration</span><span class="p">(</span><span class="nx">DURATION</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="dl">"</span><span class="s2">opacity</span><span class="dl">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="关键代码--动画时长滑块htmlcss-控制">关键代码 ④ 动画时长滑块（HTML/CSS 控制）</h3>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- HTML 滑块：监听 input 事件即可改 DURATION --&gt;</span>
+<span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">"dur"</span> <span class="na">type=</span><span class="s">"range"</span> <span class="na">min=</span><span class="s">"0"</span> <span class="na">max=</span><span class="s">"1500"</span> <span class="na">step=</span><span class="s">"50"</span> <span class="na">value=</span><span class="s">"500"</span><span class="nt">&gt;</span>
+
+<span class="c">&lt;!-- JS：改变 DURATION 后重放动画 --&gt;</span>
+document.getElementById("dur").addEventListener("input", e =&gt; {
+  DURATION = +e.target.value;
+  render();   // 用新时长重新做一次过渡
+});
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-总结本章覆盖到的陈为教材章节">🎯 总结：本章覆盖到的陈为教材章节</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>陈为教材</th>
+      <th>覆盖位置</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Ch1.5 可视化过程模型（Card, Mackinlay, van Wijk）</td>
+      <td>2.1</td>
+    </tr>
+    <tr>
+      <td>Ch3 数据变换（rollup / group / 数据表 D 层）</td>
+      <td>2.2</td>
+    </tr>
+    <tr>
+      <td>Ch6 视觉映射与树/层次数据（hierarchy / tree / cluster）</td>
+      <td>2.3</td>
+    </tr>
+    <tr>
+      <td>Ch7 交互（事件机制 / stopPropagation / 动画 transition）</td>
+      <td>2.4</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="-课堂提问建议">❓ 课堂提问建议</h2>
+
+<ol>
+  <li><strong>(2.1)</strong> van Wijk 模型为什么强调”View ⇆ Filter”这个回路？没有反馈环会怎样？</li>
+  <li><strong>(2.2)</strong> <code class="language-plaintext highlighter-rouge">d3.rollup</code> 和 <code class="language-plaintext highlighter-rouge">d3.group</code> 在返回类型上有什么关键区别？数据变换四操作里，rollup 属于哪一个？</li>
+  <li><strong>(2.3)</strong> Masonlay 排名里为什么”位置”对三种数据类型都是第一？树布局怎么用”位置通道”编码层级关系？</li>
+  <li><strong>(2.4)</strong> 不 stopPropagation 的话，事件会冒泡到 document、window。<code class="language-plaintext highlighter-rouge">duration=0</code> 和 <code class="language-plaintext highlighter-rouge">duration=500</code> 对学生感知”变化过程”有什么本质区别？</li>
+</ol>
+
+<hr />
+
+<h2 id="-启动方式">📂 启动方式</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>docs/doc-02-数据可视化流程/lesson
+python <span class="nt">-m</span> http.server 8080
+<span class="c"># 浏览器：http://localhost:8080</span>
+</code></pre></div></div>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

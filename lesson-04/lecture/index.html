@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>第 4 章 低维数据可视化 | vis</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="第 4 章 低维数据可视化" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="visualization lesson" />
+<meta property="og:description" content="visualization lesson" />
+<link rel="canonical" href="https://cinger007.github.io/vis/lesson-04/lecture.html" />
+<meta property="og:url" content="https://cinger007.github.io/vis/lesson-04/lecture.html" />
+<meta property="og:site_name" content="vis" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="第 4 章 低维数据可视化" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"visualization lesson","headline":"第 4 章 低维数据可视化","url":"https://cinger007.github.io/vis/lesson-04/lecture.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/vis/assets/css/style.css?v=35a66ecb5e35e8c4f2c54a007cb6c590255b6f06">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/vis/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://cinger007.github.io/vis/">vis</a></h1>
+      
+
+      <h1 id="第-4-章-低维数据可视化">第 4 章 低维数据可视化</h1>
+
+<blockquote>
+  <p><strong>本讲义配套集成教学页面</strong>：<a href="/vis/lesson-04/index.html"><code class="language-plaintext highlighter-rouge">./index.html</code></a>（讲解 ⇄ 代码 ⇄ 演示 三 tab 自由切换）</p>
+
+  <p>推荐教学用法：浏览器打开 lesson 页面 → 左侧选章节 → 三个 tab 来回切（讲解看原理、代码看 ⭐ 关键点、演示看实际效果）。</p>
+</blockquote>
+
+<hr />
+
+<h2 id="41-数据转换">4.1 数据转换</h2>
+
+<blockquote>
+  <p>你的 Crime 数据是宽格式，可视化常需要长格式。转换函数一行解决。</p>
+</blockquote>
+
+<h3 id="-本节使用了-colormapviridis画热图colormap-理论详见">🎨 本节使用了 colormap（Viridis）画热图。colormap 理论详见</h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>          第 3 章 3.2 colormap 三类选择。
+        你的原案例 原 5.1 节用了 1985 美国 50 州犯罪数据（CSV），含 8 个犯罪指标列。
+</code></pre></div></div>
+
+<h3 id="嵌入陈为教材理论">嵌入陈为教材理论</h3>
+
+<ul>
+  <li>长格式（long）：每行一个观测，列 = 字段（如 {state, metric, value}）。优点：方便过滤、分组、绑定到 d3 join。</li>
+  <li>宽格式（wide）：每行一个实体，列 = 指标（如 {state, murder, robbery, …}）。优点：人眼读得懂、直观。</li>
+  <li>转换：flatMap + 循环键名 = 几行代码搞定。</li>
+  <li>d3.autoType：自动推断列类型（数字、日期、布尔），省得手动 +d.field。</li>
+</ul>
+
+<hr />
+
+<h2 id="42-坐标轴变换">4.2 坐标轴变换</h2>
+
+<blockquote>
+  <p>数据空间 → 坐标系空间 → 屏幕空间。三层职责分明，错了就乱套。</p>
+</blockquote>
+
+<h3 id="你的原案例">你的原案例</h3>
+<p>原 5.1.2 节用散点展示 Crime 数据（murder vs robbery），坐标轴是 1985 数据。</p>
+
+<h3 id="嵌入陈为教材理论-1">嵌入陈为教材理论</h3>
+
+<ul>
+  <li></li>
+</ul>
+
+<ol>
+  <li>
+    <p>三层空间：</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>           数据空间：原始数值（如人口 27058000、谋杀率 8）
+</code></pre></div>    </div>
+  </li>
+  <li>坐标系空间：归一化到 0..innerWidth（标准化坐标）</li>
+  <li>屏幕空间：加上 margin 偏移（最终像素位置）</li>
+</ol>
+
+<ul>
+  <li>为什么分层：坐标系空间内的元素（线、点）可以共享，切换屏幕尺寸时无需重算。d3.axisBottom 自动帮你做坐标系→屏幕。</li>
+  <li></li>
+  <li>
+    <p>scale 选型：</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>            scaleLinear：均匀分布，最常用
+</code></pre></div>    </div>
+  </li>
+  <li>scaleLog：跨数量级（人口从 53 万到 2700 万）</li>
+  <li>scaleSqrt：面积感知（圆面积映射到值）</li>
+  <li>scaleBand：类别轴（柱状图）</li>
+</ul>
+
+<hr />
+
+<h2 id="43-曲线拟合">4.3 曲线拟合</h2>
+
+<blockquote>
+  <p>同 50 个点，用 10 种 line.curve 画风各异。什么时候用哪种？</p>
+</blockquote>
+
+<h3 id="你的原案例-1">你的原案例</h3>
+<p>原 5.1.3 节用折线 + 散点展示趋势。原始代码用了 curveCatmullRom，没讲为什么。</p>
+
+<h3 id="嵌入陈为教材理论-2">嵌入陈为教材理论</h3>
+
+<ul>
+  <li></li>
+  <li>
+    <p>插值 vs 拟合：</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>            插值（interpolation）：曲线经过所有数据点（如 Catmull-Rom、Natural）
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>拟合（fitting）：曲线不经过数据点，只反映趋势（如线性回归 LOESS）</p>
+  </li>
+  <li>d3.line().curve() 提供 10+ 种 curve，最常用：</li>
+  <li>step 系：用于离散阶跃（数字信号、状态切换）</li>
+  <li>catmullRom / natural：过所有点的张力样条，”看起来平滑”</li>
+  <li>monotoneX：保持原数据序列单调（不会出现伪震荡）</li>
+  <li>选择原则：数据有顺序性 → monotoneX / linear；数据本身抖动大 → catmullRom / basis 平滑；离散状态 → step</li>
+</ul>
+
+<hr />
+
+<h2 id="44-倾角感知45-黄金角">4.4 倾角感知（45° 黄金角）</h2>
+
+<h3 id="你的原案例-2">你的原案例</h3>
+<p>原 5.1.4 节提到”平均倾斜度最优为 45°”，但没解释原因。</p>
+
+<h3 id="嵌入陈为教材理论-3">嵌入陈为教材理论</h3>
+
+<ul>
+  <li></li>
+  <li>
+    <p>Cleveland 1984 实验：让被试估计直线的斜率，发现：</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>            斜率 = 0° 或 90° 时，估计误差最大
+</code></pre></div>    </div>
+  </li>
+  <li>斜率 = 45° 时，估计最准</li>
+  <li>
+    <p>呈 U 型曲线</p>
+  </li>
+  <li>Stevens 幂律：感知斜率 ≈ (真实斜率)^1.0 ~ 1.3。即人眼把”陡度”夸张了 30%。</li>
+  <li></li>
+  <li>
+    <p>设计原则：</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>            关键数据斜率落在 30°~60° 区间最稳
+</code></pre></div>    </div>
+  </li>
+  <li>对比增长曲线时，用 log 轴让陡度落在 45° 左右</li>
+  <li>避免在 5° 以下或 85° 以上做趋势对比（误差太大）</li>
+</ul>
+
+<hr />
+
+<h2 id="45-等值线marching-squares">4.5 等值线（Marching Squares）</h2>
+
+<h3 id="你的原案例-3">你的原案例</h3>
+<p>原 5.2.2 节用 Marching Squares 提取 Crime 数据的等值线。原始代码是截图占位。</p>
+
+<h3 id="嵌入陈为教材理论-4">嵌入陈为教材理论</h3>
+
+<ul>
+  <li>Marching Squares 原理：把标量场离散化为网格，每个 cell 4 个角的”是否大于阈值”决定 case 编号 0~15（2⁴=16 种）。每种 case 对应 0/1/2 条线段，把”超过阈值”和”未超过阈值”的两片区域分开。</li>
+  <li>16 种 case：编码 bit0=BL、bit1=BR、bit2=TR、bit3=TL。</li>
+  <li>扩展到 3D：Marching Cubes（Lorensen &amp; Cline 1987），2⁸=256 种 case，常用于医学 MRI / CT 等值面提取。</li>
+  <li></li>
+  <li>
+    <p>应用场景：</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>            地形等高线（地图）
+</code></pre></div>    </div>
+  </li>
+  <li>医学影像（MRI/CT 等值面）</li>
+  <li>密度等高图（核密度估计）</li>
+  <li>天气预报（等温线、等压线）</li>
+</ul>
+
+<hr />
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
